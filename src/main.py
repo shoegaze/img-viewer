@@ -1,18 +1,14 @@
 def main():
-    from PIL import Image
-
-    im = Image.open("src/mando.jpg")
-    print(im.format, im.size, im.mode)
-
+    from PIL import Image, ImageTk
     from tkinter import Tk, ttk
 
     root = Tk()
 
-    frame = ttk.Frame(root, padding=10)
-    frame.grid()
+    image = Image.open(r"src/mando.jpg")
+    image = ImageTk.PhotoImage(image)
 
-    ttk.Label(frame, text="Hello, world!").grid(column=0, row=0)
-    ttk.Button(frame, text="Quit", command=root.destroy).grid(column=1, row=0)
+    label = ttk.Label(root, image=image)
+    label.pack()
 
     root.mainloop()
 
