@@ -1,19 +1,8 @@
 def main() -> None:
-    from pyglet.window import Window
-    import pyglet.resource
+    from viewer import Viewer
     import pyglet.app
 
-    image = pyglet.resource.image(r'mando.jpg')
-    window = Window(
-        resizable=True,
-        width=image.width,
-        height=image.height
-    )
-
-    @window.event
-    def on_draw():
-        window.clear()
-        image.blit(0, 0)
+    _viewer = Viewer(r'src/mando.jpg')
 
     pyglet.app.run()
 
