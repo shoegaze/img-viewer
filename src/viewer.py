@@ -3,16 +3,25 @@ from pyglet.window import Window
 from pyglet.image import ImageData
 
 
+def to_image_data(handle: Image.Image) -> ImageData:
+    return ImageData(
+        handle.width,
+        handle.height,
+        handle.mode,
+        handle.tobytes()
+    )
+
+
 class Viewer(Window):
     image_handle: Image.Image
     image_data: ImageData
 
     def __init__(self, url: str):
-        # Try to open and load image at `url`
+        # Try to open and load the image at path `url`
         try:
             with Image.open(url) as im:
                 self.image_handle = im.transpose(Image.FLIP_TOP_BOTTOM)
-                self.image_data = ImageData(
+                self.image_data = to_image_data(self.image_handle)
                     self.image_handle.width,
                     self.image_handle.height,
                     self.image_handle.mode,
