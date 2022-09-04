@@ -1,16 +1,21 @@
-def main():
-    from PIL import Image, ImageTk
-    from tkinter import Tk, ttk
+def main() -> None:
+    from pyglet.window import Window
+    import pyglet.resource
+    import pyglet.app
 
-    root = Tk()
+    image = pyglet.resource.image(r'mando.jpg')
+    window = Window(
+        resizable=True,
+        width=image.width,
+        height=image.height
+    )
 
-    image = Image.open(r"src/mando.jpg")
-    image = ImageTk.PhotoImage(image)
+    @window.event
+    def on_draw():
+        window.clear()
+        image.blit(0, 0)
 
-    label = ttk.Label(root, image=image)
-    label.pack()
-
-    root.mainloop()
+    pyglet.app.run()
 
 
 if __name__ == '__main__':
