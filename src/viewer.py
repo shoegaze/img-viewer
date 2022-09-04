@@ -1,3 +1,5 @@
+from typing import Literal, Union
+
 from PIL import Image
 from pyglet.window import Window
 from pyglet.image import ImageData
@@ -22,11 +24,6 @@ class Viewer(Window):
             with Image.open(url) as im:
                 self.image_handle = im.transpose(Image.FLIP_TOP_BOTTOM)
                 self.image_data = to_image_data(self.image_handle)
-                    self.image_handle.width,
-                    self.image_handle.height,
-                    self.image_handle.mode,
-                    self.image_handle.tobytes()
-                )
         except:
             print(f'ERROR: Unable to open file `{url}`')
 
@@ -36,6 +33,14 @@ class Viewer(Window):
             height=self.image_data.height
         )
 
+    def rotate(self, dir: Union[Literal['cw'], Literal['ccw']]) -> None:
+        if dir == None:
+            return
+
+        rot = Image.ROTATE_90 if dir == 'ccw' else Image.ROTATE_270
+        self.image_handle = self.image_handle.transpose(rot)
+        self.image_data = to_image_data(self.image_handle)
+
     def on_draw(self):
         self.clear()
         self.image_data.blit(0, 0)
@@ -43,15 +48,7 @@ class Viewer(Window):
     def on_key_release(self, symbol: int, modifiers: int):
         from pyglet.window import key
 
-        # Rotate image
-        if symbol == key.LEFT:
-            self.image_handle = self.image_handle.transpose(Image.ROTATE_270)
-        elif symbol == key.RIGHT:
-            self.image_handle = self.image_handle.transpose(Image.ROTATE_90)
-
-        self.image_data = ImageData(
-            self.image_handle.width,
-            self.image_handle.height,
-            self.image_handle.mode,
-            self.image_handle.tobytes()
-        )
+        if symbol == key.RIGHT:
+            self.rotate('ccw')
+        elif symbol == key.LEFT:
+            self.rotate('cw')
