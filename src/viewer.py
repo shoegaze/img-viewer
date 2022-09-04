@@ -41,6 +41,10 @@ class Viewer(Window):
         self.image_handle = self.image_handle.transpose(rot)
         self.image_data = to_image_data(self.image_handle)
 
+    def resize(self, width: int, height: int) -> None:
+        self.image_handle = self.image_handle.resize((width, height))
+        self.image_data = to_image_data(self.image_handle)
+
     def on_draw(self):
         self.clear()
         self.image_data.blit(0, 0)
@@ -52,3 +56,8 @@ class Viewer(Window):
             self.rotate('ccw')
         elif symbol == key.LEFT:
             self.rotate('cw')
+
+    def on_resize(self, width: int, height: int):
+        super().on_resize(width, height)
+
+        self.resize(width, height)
