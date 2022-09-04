@@ -33,6 +33,11 @@ class Viewer(Window):
             height=self.image_data.height
         )
 
+    def on_draw(self) -> None:
+        self.clear()
+        self.image_data.blit(0, 0)
+
+
     def rotate(self, dir: Union[Literal['cw'], Literal['ccw']]) -> None:
         if dir == None:
             return
@@ -44,15 +49,8 @@ class Viewer(Window):
         width, height = self.image_handle.size
         self.set_size(width, height)
 
-    def resize(self, width: int, height: int) -> None:
-        self.image_handle = self.image_handle.resize((width, height))
-        self.image_data = to_image_data(self.image_handle)
 
-    def on_draw(self):
-        self.clear()
-        self.image_data.blit(0, 0)
-
-    def on_key_release(self, symbol: int, modifiers: int):
+    def on_key_release(self, symbol: int, modifiers: int) -> None:
         from pyglet.window import key
 
         if symbol == key.RIGHT:
@@ -60,7 +58,12 @@ class Viewer(Window):
         elif symbol == key.LEFT:
             self.rotate('cw')
 
-    def on_resize(self, width: int, height: int):
+
+    def resize(self, width: int, height: int) -> None:
+        self.image_handle = self.image_handle.resize((width, height))
+        self.image_data = to_image_data(self.image_handle)
+
+    def on_resize(self, width: int, height: int) -> None:
         super().on_resize(width, height)
 
         self.resize(width, height)
