@@ -1,5 +1,3 @@
-from typing import Optional
-
 from PIL import Image
 from pyglet.window import Window
 from pyglet.image import ImageData
@@ -32,3 +30,19 @@ class Viewer(Window):
     def on_draw(self):
         self.clear()
         self.image_data.blit(0, 0)
+
+    def on_key_release(self, symbol: int, modifiers: int):
+        from pyglet.window import key
+
+        # Rotate image
+        if symbol == key.LEFT:
+            self.image_handle = self.image_handle.transpose(Image.ROTATE_270)
+        elif symbol == key.RIGHT:
+            self.image_handle = self.image_handle.transpose(Image.ROTATE_90)
+
+        self.image_data = ImageData(
+            self.image_handle.width,
+            self.image_handle.height,
+            self.image_handle.mode,
+            self.image_handle.tobytes()
+        )
