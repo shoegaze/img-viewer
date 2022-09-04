@@ -41,6 +41,9 @@ class Viewer(Window):
         self.image_handle = self.image_handle.transpose(rot)
         self.image_data = to_image_data(self.image_handle)
 
+        width, height = self.image_handle.size
+        self.set_size(width, height)
+
     def resize(self, width: int, height: int) -> None:
         self.image_handle = self.image_handle.resize((width, height))
         self.image_data = to_image_data(self.image_handle)
