@@ -5,7 +5,7 @@ from pyglet.window import Window
 from pyglet.image import ImageData
 
 
-def to_image_data(handle: Image.Image) -> ImageData:
+def to_image_data(handle: Image.Image) -> Optional[ImageData]:
     return ImageData(
         handle.width,
         handle.height,
@@ -25,6 +25,9 @@ class Viewer(Window):
             with Image.open(url) as im:
                 self.image_handle = im.transpose(Image.FLIP_TOP_BOTTOM)
                 self.image_data = to_image_data(self.image_handle)
+
+                if not self.image_data:
+                    raise ValueError('Unable to convert file to image data')
         except:
             print(f'ERROR: Unable to open file `{url}`')
 
