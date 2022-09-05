@@ -51,10 +51,13 @@ class Viewer(Window):
                 height=self.image_data.height,
                 style=Window.WINDOW_STYLE_BORDERLESS
             )
+
+            self.is_alive = True
         else:
             super().__init__()
+
+            self.is_alive = False
             self.close()
-            return
 
         self._minimum_size = (100, 100)
 
