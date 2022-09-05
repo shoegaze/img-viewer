@@ -10,7 +10,7 @@ def validate_path(_context: Context, _param: Option, path: str) -> bool:
     if not os.path.exists(path):
         raise click.BadParameter(f'"{path}"')
 
-    return True
+    return path
 
 
 @click.command()

@@ -30,6 +30,7 @@ class Viewer(Window):
                     raise ValueError('Unable to convert file to image data')
         except:
             print(f'ERROR: Unable to open file `{url}`')
+            return
 
         super().__init__(
             resizable=True,
