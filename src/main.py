@@ -15,7 +15,8 @@ def validate_path(_context: Context, _param: Option, path: str) -> bool:
 
 @click.command()
 @click.option(
-    '--path',
+    '--image',
+    'path',
     required=True,
     type=str,
     help='Image file to display',
