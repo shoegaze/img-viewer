@@ -22,7 +22,7 @@ def validate_path(_context: Context, _param: Option, path: str) -> bool:
     help='Image file to display',
     callback=validate_path
 )
-def main(path: Optional[str]) -> None:
+def display(path: Optional[str]) -> None:
     from viewer import Viewer
     import pyglet.app
 
@@ -32,4 +32,4 @@ def main(path: Optional[str]) -> None:
 
 
 if __name__ == '__main__':
-    main(None)
+    display(None)
