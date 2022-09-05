@@ -64,10 +64,6 @@ class Viewer(Window):
         self.location_before_fullscreen = self.get_location()
         self.size_before_fullscreen = self.get_size()
 
-    def on_draw(self) -> None:
-        self.clear()
-        self.image_data.blit(0, 0)
-
     # Rotation:
 
     def rotate(self, dir: Union[Literal['cw'], Literal['ccw']]) -> None:
@@ -81,14 +77,6 @@ class Viewer(Window):
         width, height = self.image_handle.size
         self.set_size(width, height)
 
-    def on_key_release(self, symbol: int, _modifiers: int) -> None:
-        from pyglet.window import key
-
-        if symbol == key.RIGHT:
-            self.rotate('cw')
-        elif symbol == key.LEFT:
-            self.rotate('ccw')
-
     # Resize:
 
     def resize(self, width: int, height: int) -> None:
@@ -96,11 +84,6 @@ class Viewer(Window):
         self.image_data = to_image_data(
             self.image_handle.copy().resize((width, height))
         )
-
-    def on_resize(self, width: int, height: int) -> None:
-        super().on_resize(width, height)
-
-        self.resize(width, height)
 
     # Translation:
 
@@ -138,23 +121,6 @@ class Viewer(Window):
 
         self.set_location(*w_S)
 
-    def on_mouse_press(self, x: int, y: int, button: int, _modifiers: int):
-        from pyglet.window import mouse
-
-        if button & mouse.LEFT:
-            # Window position in screen-space (S)
-            w_S = self.get_location()
-
-            # Mouse position in S
-            m_S = self.mouse_to_screen((x, y))
-
-            # Displacement between drag origin and window position in S
-            #  to be preserved after mouse displacement
-            self.drag_displacement = (
-                w_S[0] - m_S[0],
-                w_S[1] - m_S[1]
-            )
-
     def toggle_fullscreen(self) -> None:
         import pyglet
 
@@ -175,6 +141,38 @@ class Viewer(Window):
 
     def reset_size(self) -> None:
         self.set_size(*self.original_size)
+
+    # Events
+
+    def on_key_release(self, symbol: int, _modifiers: int) -> None:
+        from pyglet.window import key
+
+        if symbol == key.RIGHT:
+            self.rotate('cw')
+        elif symbol == key.LEFT:
+            self.rotate('ccw')
+
+    def on_resize(self, width: int, height: int) -> None:
+        super().on_resize(width, height)
+
+        self.resize(width, height)
+
+    def on_mouse_press(self, x: int, y: int, button: int, _modifiers: int):
+        from pyglet.window import mouse
+
+        if button & mouse.LEFT:
+            # Window position in screen-space (S)
+            w_S = self.get_location()
+
+            # Mouse position in S
+            m_S = self.mouse_to_screen((x, y))
+
+            # Displacement between drag origin and window position in S
+            #  to be preserved after mouse displacement
+            self.drag_displacement = (
+                w_S[0] - m_S[0],
+                w_S[1] - m_S[1]
+            )
 
     def on_mouse_release(self, _x: int, _y: int, button: int, _modifiers: int) -> None:
         from pyglet.window import mouse
@@ -203,3 +201,7 @@ class Viewer(Window):
                 return
 
             self.set_location_to_mouse(x, y, dx, dy)
+
+    def on_draw(self) -> None:
+        self.clear()
+        self.image_data.blit(0, 0)
