@@ -164,7 +164,10 @@ class Viewer(Window):
 
         self.is_fullscreened = not self.is_fullscreened
 
-    def on_mouse_release(self, _x: int, _y: int, button: int, _modifiers: int):
+    def reset_size(self) -> None:
+        self.set_size(*self.original_size)
+
+    def on_mouse_release(self, _x: int, _y: int, button: int, _modifiers: int) -> None:
         from pyglet.window import mouse
         import time
 
@@ -179,7 +182,7 @@ class Viewer(Window):
             self.last_click = t
 
         if button & mouse.MIDDLE:
-            self.set_size(*self.original_size)
+            self.reset_size()
         elif button & mouse.RIGHT:
             self.close()
 
