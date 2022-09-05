@@ -74,7 +74,7 @@ class Viewer(Window):
         if dir == None:
             return
 
-        rot = Image.ROTATE_90 if dir == 'ccw' else Image.ROTATE_270
+        rot = Image.ROTATE_90 if dir == 'cw' else Image.ROTATE_270
         self.image_handle = self.image_handle.transpose(rot)
         self.image_data = to_image_data(self.image_handle)
 
@@ -85,9 +85,9 @@ class Viewer(Window):
         from pyglet.window import key
 
         if symbol == key.RIGHT:
-            self.rotate('ccw')
-        elif symbol == key.LEFT:
             self.rotate('cw')
+        elif symbol == key.LEFT:
+            self.rotate('ccw')
 
     # Resize:
 
