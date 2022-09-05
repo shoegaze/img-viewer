@@ -30,6 +30,8 @@ class Viewer(Window):
     size_before_fullscreen: Tuple[int, int]
 
     def __init__(self, url: str):
+        should_crash = False
+
         # Try to open and load the image at path `url`
         try:
             with Image.open(url) as im:
@@ -40,16 +42,21 @@ class Viewer(Window):
                     raise ValueError('Unable to convert file to image data')
         except:
             print(f'ERROR: Unable to open file "{url}"')
+            should_crash = True
+
+        if not should_crash:
+            super().__init__(
+                resizable=True,
+                width=self.image_data.width,
+                height=self.image_data.height,
+                style=Window.WINDOW_STYLE_BORDERLESS
+            )
+        else:
+            super().__init__()
+            self.close()
             return
 
-        super().__init__(
-            resizable=True,
-            width=self.image_data.width,
-            height=self.image_data.height,
-            style=Window.WINDOW_STYLE_BORDERLESS
-        )
-
-        self._minimum_size = (100, 100)
+        self.set_minimum_size(100, 100)
 
         self.original_size = self.get_size()
 
@@ -85,8 +92,10 @@ class Viewer(Window):
     # Resize:
 
     def resize(self, width: int, height: int) -> None:
-        self.image_handle = self.image_handle.resize((width, height))
-        self.image_data = to_image_data(self.image_handle)
+        # Copy to preserve image quality
+        self.image_data = to_image_data(
+            self.image_handle.copy().resize((width, height))
+        )
 
     def on_resize(self, width: int, height: int) -> None:
         super().on_resize(width, height)
@@ -164,7 +173,10 @@ class Viewer(Window):
 
         self.is_fullscreened = not self.is_fullscreened
 
-    def on_mouse_release(self, _x: int, _y: int, button: int, _modifiers: int):
+    def reset_size(self) -> None:
+        self.set_size(*self.original_size)
+
+    def on_mouse_release(self, _x: int, _y: int, button: int, _modifiers: int) -> None:
         from pyglet.window import mouse
         import time
 
@@ -179,7 +191,7 @@ class Viewer(Window):
             self.last_click = t
 
         if button & mouse.MIDDLE:
-            self.set_size(*self.original_size)
+            self.reset_size()
         elif button & mouse.RIGHT:
             self.close()
 
