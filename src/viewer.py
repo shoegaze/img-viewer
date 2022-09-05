@@ -51,7 +51,7 @@ class Viewer(Window):
         width, height = self.image_handle.size
         self.set_size(width, height)
 
-    def on_key_release(self, symbol: int, modifiers: int) -> None:
+    def on_key_release(self, symbol: int, _modifiers: int) -> None:
         from pyglet.window import key
 
         if symbol == key.RIGHT:
@@ -106,7 +106,7 @@ class Viewer(Window):
 
         self.set_location(w_S[0], w_S[1])
 
-    def on_mouse_press(self, x: int, y: int, button: int, modifiers: int):
+    def on_mouse_press(self, x: int, y: int, _button: int, _modifiers: int):
         # Window position in screen-space (S)
         w_S = self.get_location()
 
@@ -120,10 +120,10 @@ class Viewer(Window):
             w_S[1] - m_S[1]
         )
 
-    def on_mouse_release(self, x: int, y: int, button: int, modifiers: int):
+    def on_mouse_release(self, _x: int, _y: int, _button: int, _modifiers: int):
         self.drag_origin = None
 
-    def on_mouse_drag(self, x: int, y: int, dx: int, dy: int, buttons: int, modifiers: int) -> None:
+    def on_mouse_drag(self, x: int, y: int, dx: int, dy: int, buttons: int, _modifiers: int) -> None:
         from pyglet.window import mouse
 
         if buttons & mouse.LEFT:
