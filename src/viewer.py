@@ -56,7 +56,7 @@ class Viewer(Window):
             self.close()
             return
 
-        self._minimum_size = (100, 100)
+        self.set_minimum_size(100, 100)
 
         self.original_size = self.get_size()
 
