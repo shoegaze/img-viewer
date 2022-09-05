@@ -5,6 +5,9 @@ from pyglet.window import Window
 from pyglet.image import ImageData
 
 
+DOUBLE_CLICK_INTERVAL = 0.25
+
+
 def to_image_data(handle: Image.Image) -> Optional[ImageData]:
     return ImageData(
         handle.width,
@@ -19,6 +22,11 @@ class Viewer(Window):
     image_data: ImageData
     drag_displacement: Optional[Tuple[int, int]] = None
 
+    last_click: float = 0.0
+    is_fullscreened: bool
+    location_before_fullscreen: Tuple[int, int]
+    size_before_fullscreen: Tuple[int, int]
+
     def __init__(self, url: str):
         # Try to open and load the image at path `url`
         try:
@@ -29,7 +37,7 @@ class Viewer(Window):
                 if not self.image_data:
                     raise ValueError('Unable to convert file to image data')
         except:
-            print(f'ERROR: Unable to open file `{url}`')
+            print(f'ERROR: Unable to open file "{url}"')
             return
 
         super().__init__(
@@ -40,6 +48,10 @@ class Viewer(Window):
         )
 
         self._minimum_size = (100, 100)
+
+        self.is_fullscreened = False
+        self.location_before_fullscreen = self.get_location()
+        self.size_before_fullscreen = self.get_size()
 
     def on_draw(self) -> None:
         self.clear()
@@ -130,11 +142,37 @@ class Viewer(Window):
                 w_S[1] - m_S[1]
             )
 
+    def toggle_fullscreen(self) -> None:
+        import pyglet
+
+        if not self.is_fullscreened:
+            self.location_before_fullscreen = self.get_location()
+            self.size_before_fullscreen = self.get_size()
+
+            display = pyglet.canvas.Display()
+            screen = display.get_default_screen()
+
+            self.set_location(0, 0)
+            self.set_size(screen.width, screen.height)
+        else:
+            self.set_location(*self.location_before_fullscreen)
+            self.set_size(*self.size_before_fullscreen)
+
+        self.is_fullscreened = not self.is_fullscreened
+
     def on_mouse_release(self, _x: int, _y: int, button: int, _modifiers: int):
         from pyglet.window import mouse
+        import time
 
         if button & mouse.LEFT:
             self.drag_origin = None
+
+            # Toggle fullscreen on double click
+            t = time.time()
+            if t - self.last_click < DOUBLE_CLICK_INTERVAL:
+                self.toggle_fullscreen()
+
+            self.last_click = t
 
         if button & mouse.RIGHT:
             self.close()
@@ -143,4 +181,7 @@ class Viewer(Window):
         from pyglet.window import mouse
 
         if buttons & mouse.LEFT:
+            if self.is_fullscreened:
+                return
+
             self.set_location_to_mouse(x, y, dx, dy)
