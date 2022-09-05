@@ -22,6 +22,8 @@ class Viewer(Window):
     image_data: ImageData
     drag_displacement: Optional[Tuple[int, int]] = None
 
+    original_size: Tuple[int, int]
+
     last_click: float = 0.0
     is_fullscreened: bool
     location_before_fullscreen: Tuple[int, int]
@@ -48,6 +50,8 @@ class Viewer(Window):
         )
 
         self._minimum_size = (100, 100)
+
+        self.original_size = self.get_size()
 
         self.is_fullscreened = False
         self.location_before_fullscreen = self.get_location()
@@ -174,7 +178,9 @@ class Viewer(Window):
 
             self.last_click = t
 
-        if button & mouse.RIGHT:
+        if button & mouse.MIDDLE:
+            self.set_size(*self.original_size)
+        elif button & mouse.RIGHT:
             self.close()
 
     def on_mouse_drag(self, x: int, y: int, dx: int, dy: int, buttons: int, _modifiers: int) -> None:
