@@ -19,7 +19,7 @@ def validate_path(_context: Context, _param: Option, path: str) -> bool:
     'path',
     required=True,
     type=str,
-    help='Image file to display',
+    help='Path to image file',
     callback=validate_path
 )
 def display(path: Optional[str]) -> None:
