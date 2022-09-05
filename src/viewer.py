@@ -109,22 +109,31 @@ class Viewer(Window):
 
         self.set_location(*w_S)
 
-    def on_mouse_press(self, x: int, y: int, _button: int, _modifiers: int):
-        # Window position in screen-space (S)
-        w_S = self.get_location()
+    def on_mouse_press(self, x: int, y: int, button: int, _modifiers: int):
+        from pyglet.window import mouse
 
-        # Mouse position in S
-        m_S = self.mouse_to_screen((x, y))
+        if button & mouse.LEFT:
+            # Window position in screen-space (S)
+            w_S = self.get_location()
 
-        # Displacement between drag origin and window position in S
-        #  to be preserved after mouse displacement
-        self.drag_displacement = (
-            w_S[0] - m_S[0],
-            w_S[1] - m_S[1]
-        )
+            # Mouse position in S
+            m_S = self.mouse_to_screen((x, y))
 
-    def on_mouse_release(self, _x: int, _y: int, _button: int, _modifiers: int):
-        self.drag_origin = None
+            # Displacement between drag origin and window position in S
+            #  to be preserved after mouse displacement
+            self.drag_displacement = (
+                w_S[0] - m_S[0],
+                w_S[1] - m_S[1]
+            )
+
+    def on_mouse_release(self, _x: int, _y: int, button: int, _modifiers: int):
+        from pyglet.window import mouse
+
+        if button & mouse.LEFT:
+            self.drag_origin = None
+
+        if button & mouse.RIGHT:
+            self.close()
 
     def on_mouse_drag(self, x: int, y: int, dx: int, dy: int, buttons: int, _modifiers: int) -> None:
         from pyglet.window import mouse
