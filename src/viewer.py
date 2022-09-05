@@ -30,6 +30,8 @@ class Viewer(Window):
     size_before_fullscreen: Tuple[int, int]
 
     def __init__(self, url: str):
+        should_crash = False
+
         # Try to open and load the image at path `url`
         try:
             with Image.open(url) as im:
@@ -40,14 +42,19 @@ class Viewer(Window):
                     raise ValueError('Unable to convert file to image data')
         except:
             print(f'ERROR: Unable to open file "{url}"')
-            return
+            should_crash = True
 
-        super().__init__(
-            resizable=True,
-            width=self.image_data.width,
-            height=self.image_data.height,
-            style=Window.WINDOW_STYLE_BORDERLESS
-        )
+        if not should_crash:
+            super().__init__(
+                resizable=True,
+                width=self.image_data.width,
+                height=self.image_data.height,
+                style=Window.WINDOW_STYLE_BORDERLESS
+            )
+        else:
+            super().__init__()
+            self.close()
+            return
 
         self._minimum_size = (100, 100)
 
