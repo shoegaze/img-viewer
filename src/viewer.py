@@ -92,8 +92,10 @@ class Viewer(Window):
     # Resize:
 
     def resize(self, width: int, height: int) -> None:
-        self.image_handle = self.image_handle.resize((width, height))
-        self.image_data = to_image_data(self.image_handle)
+        # Copy to preserve image quality
+        self.image_data = to_image_data(
+            self.image_handle.copy().resize((width, height))
+        )
 
     def on_resize(self, width: int, height: int) -> None:
         super().on_resize(width, height)
