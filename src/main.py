@@ -4,31 +4,46 @@ import click
 from click.core import Context, Option
 
 
-def validate_path(_context: Context, _param: Option, path: str) -> bool:
+def validate_paths(_context: Context, _param: Option, paths: list[str]) -> str:
     import os
 
-    if not os.path.exists(path):
-        raise click.BadParameter(f'"{path}"')
+    for path in paths:
+        if not os.path.exists(path):
+            raise click.BadParameter(f'"{path}"')
 
     return path
 
 
 @click.command()
 @click.option(
-    '--path',
-    required=True,
+    '--image',
+    'paths',
+    multiple=True,
     type=str,
-    help='Image file to display',
-    callback=validate_path
+    help='Path to image file',
+    callback=validate_paths
 )
-def main(path: Optional[str]) -> None:
+def display(paths: Optional[list[str]]) -> None:
     from viewer import Viewer
     import pyglet.app
 
-    Viewer(path)
+    print(f'{paths=}: {type(paths)}')
 
-    pyglet.app.run()
+    viewers = []
+    for path in paths:
+        print(f'{path=}: {type(path)}')
+
+        viewers.append(Viewer(path))
+
+    for viewer in viewers:
+        if not viewer.is_alive:
+            viewer.close()
+
+    print(f'{viewers=}')
+
+    if viewers:
+        pyglet.app.run()
 
 
 if __name__ == '__main__':
-    main(None)
+    display(None)
