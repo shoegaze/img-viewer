@@ -31,8 +31,11 @@ class Viewer(Window):
         super().__init__(
             resizable=True,
             width=self.image_data.width,
-            height=self.image_data.height
+            height=self.image_data.height,
+            style=Window.WINDOW_STYLE_BORDERLESS
         )
+
+        self._minimum_size = (100, 100)
 
     def on_draw(self) -> None:
         self.clear()
@@ -104,7 +107,7 @@ class Viewer(Window):
             self.drag_displacement[1] + m_S[1]
         )
 
-        self.set_location(w_S[0], w_S[1])
+        self.set_location(*w_S)
 
     def on_mouse_press(self, x: int, y: int, _button: int, _modifiers: int):
         # Window position in screen-space (S)
