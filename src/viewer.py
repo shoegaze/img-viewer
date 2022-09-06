@@ -34,23 +34,19 @@ class Viewer(Window):
 
         # Try to open and load the image at path `url`
         try:
-            with Image.open(url) as im:
-                self.image_handle = im.transpose(Image.FLIP_TOP_BOTTOM)
-                self.image_data = to_image_data(self.image_handle)
+        with Image.open(url) as im:
+            self.image_handle = im.transpose(Image.FLIP_TOP_BOTTOM)
+            self.image_data = to_image_data(self.image_handle)
 
-                if not self.image_data:
-                    raise ValueError('Unable to convert file to image data')
-        except:
-            print(f'ERROR: Unable to open file "{url}"')
-            should_crash = True
+            if not self.image_data:
+                raise ValueError(f'ERROR: Unable to open file "{url}"')
 
-        if not should_crash:
-            super().__init__(
-                resizable=True,
-                width=self.image_data.width,
-                height=self.image_data.height,
-                style=Window.WINDOW_STYLE_BORDERLESS
-            )
+        super().__init__(
+            width=self.image_data.width,
+            height=self.image_data.height,
+            resizable=True,
+            style=Window.WINDOW_STYLE_BORDERLESS
+        )
         else:
             super().__init__()
             self.close()
