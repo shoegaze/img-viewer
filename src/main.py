@@ -24,11 +24,11 @@ def validate_path(_context: Context, _param: Option, path: str) -> bool:
 )
 def display(path: Optional[str]) -> None:
     from viewer import Viewer
-    import pyglet.app
 
-    Viewer(path)
+    viewer = Viewer(path)
 
-    pyglet.app.run()
+    while viewer.is_alive:
+        viewer.update()
 
 
 if __name__ == '__main__':

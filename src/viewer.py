@@ -18,6 +18,8 @@ def to_image_data(handle: Image.Image) -> Optional[ImageData]:
 
 
 class Viewer(Window):
+    is_alive: bool = True
+
     image_handle: Image.Image
     image_data: ImageData
     drag_displacement: Optional[Tuple[int, int]] = None
@@ -30,10 +32,7 @@ class Viewer(Window):
     size_before_fullscreen: Tuple[int, int]
 
     def __init__(self, url: str):
-        should_crash = False
-
         # Try to open and load the image at path `url`
-        try:
         with Image.open(url) as im:
             self.image_handle = im.transpose(Image.FLIP_TOP_BOTTOM)
             self.image_data = to_image_data(self.image_handle)
@@ -47,10 +46,6 @@ class Viewer(Window):
             resizable=True,
             style=Window.WINDOW_STYLE_BORDERLESS
         )
-        else:
-            super().__init__()
-            self.close()
-            return
 
         self.set_minimum_size(100, 100)
 
@@ -120,7 +115,9 @@ class Viewer(Window):
     def toggle_fullscreen(self) -> None:
         import pyglet
 
-        if not self.is_fullscreened:
+        self.is_fullscreened = not self.is_fullscreened
+
+        if self.is_fullscreened:
             self.location_before_fullscreen = self.get_location()
             self.size_before_fullscreen = self.get_size()
 
@@ -133,10 +130,16 @@ class Viewer(Window):
             self.set_location(*self.location_before_fullscreen)
             self.set_size(*self.size_before_fullscreen)
 
-        self.is_fullscreened = not self.is_fullscreened
-
     def reset_size(self) -> None:
         self.set_size(*self.original_size)
+
+    def render(self) -> None:
+        self.clear()
+        self.image_data.blit(0, 0)
+
+    def update(self) -> None:
+        self.render()
+        self.dispatch_events()
 
     # Events
 
@@ -187,6 +190,7 @@ class Viewer(Window):
         if button & mouse.MIDDLE:
             self.reset_size()
         elif button & mouse.RIGHT:
+            self.is_alive = False
             self.close()
 
     def on_mouse_drag(self, x: int, y: int, dx: int, dy: int, buttons: int, _modifiers: int) -> None:
@@ -198,6 +202,8 @@ class Viewer(Window):
 
             self.set_location_to_mouse(x, y, dx, dy)
 
-    def on_draw(self) -> None:
-        self.clear()
-        self.image_data.blit(0, 0)
+    def on_draw(self):
+        self.render()
+
+    def on_close(self):
+        self.is_alive = False
